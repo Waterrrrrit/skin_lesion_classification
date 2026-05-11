@@ -60,12 +60,14 @@ def main():
     set_seed(42)
     default_dataset_root = Path(__file__).resolve().parent / "dataset"
 
-    parser = argparse.ArgumentParser(description="피부 병변 13클래스 분류 모델 학습 스크립트")
-    parser.add_argument("--dataset-root", type=Path, default=default_dataset_root, help="데이터셋 최상위 경로")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--dataset-root", type=Path, 
+                        default=Path(os.environ.get("SM_CHANNEL_TRAINING", "./dataset")))
     parser.add_argument("--epochs", type=int, default=20)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--lr", type=float, default=1e-4)
-    parser.add_argument("--save-dir", type=Path, default=Path("./outputs"))
+    parser.add_argument("--save-dir", type=Path, 
+                        default=Path(os.environ.get("SM_MODEL_DIR", "./outputs")))
     args = parser.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
